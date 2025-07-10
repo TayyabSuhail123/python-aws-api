@@ -22,3 +22,35 @@ async def test_happy_path():
             await asyncio.sleep(0.6)
         else:
             pytest.fail("Agent never completed")
+
+
+@pytest.mark.asyncio
+async def test_reject_when_busy():
+    transport = ASGITransport(app=app)                     
+    async with AsyncClient(transport=transport,
+                           base_url="http://test") as ac:
+        body = {"agent_type": "document-extractor",
+                "user_id": str(uuid4())}
+
+        first = await ac.post("/agents/run", json=body)    
+        assert first.status_code == 202        
+
+        await asyncio.sleep(0.05)            
+
+        second = await ac.post("/agents/run", json=body)   
+        assert second.status_code == 409                
+        assert "already running" in second.text         
+
+
+@pytest.mark.asyncio
+async def test_invalid_agent_type():
+    transport = ASGITransport(app=app)                  
+    async with AsyncClient(transport=transport,
+                           base_url="http://test") as ac:
+        body = {
+            "agent_type": "banana",                     
+            "user_id": str(uuid4()),
+        }
+
+        resp = await ac.post("/agents/run", json=body)
+        assert resp.status_code == 422      
