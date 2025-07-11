@@ -1,20 +1,23 @@
-import logging
-import structlog
+import logging, sys, structlog
+from config import settings
 
-# The descion to use structlog was made so that the logs can be machine readable by cloudfront or Grafana
+NUM_LEVEL = getattr(logging, settings.log_level.upper(), logging.INFO)
 
-def configure_logging(level: int = logging.INFO) -> None:
-    
+def configure_logging() -> None:
     logging.basicConfig(
-        level=level,
-        format="%(message)s",        
+        level=NUM_LEVEL,
+        format="%(message)s",
+        handlers=[logging.StreamHandler(sys.stdout)],
+        force=True,
     )
 
     structlog.configure(
-        wrapper_class=structlog.make_filtering_bound_logger(level),
+        wrapper_class=structlog.make_filtering_bound_logger(NUM_LEVEL),
         processors=[
-            structlog.processors.TimeStamper(fmt="iso"),   # adds ISO8601 timestamp
-            structlog.processors.add_log_level,            # adds "level" field
-            structlog.processors.JSONRenderer(),           # final JSON output
+            structlog.processors.TimeStamper(fmt="iso"),
+            structlog.processors.add_log_level,
+            structlog.processors.JSONRenderer(),
         ],
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        cache_logger_on_first_use=True,
     )

@@ -1,6 +1,6 @@
 from enum import Enum
 from uuid import UUID
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 class AgentType(str, Enum):
     document_extractor = "document-extractor"
