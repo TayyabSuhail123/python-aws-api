@@ -29,7 +29,6 @@ async def run_agent(request: AgentRunRequest):
 
     asyncio.create_task(_execute_agent(run_id, request))
 
-    # 4️⃣  Tell the caller we accepted it
     return {"run_id": run_id}
 
 
