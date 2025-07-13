@@ -4,14 +4,14 @@ Self-contained FastAPI service that launches **one agent at a time** and exposes
 REST endpoints to start / monitor runs. Designed as a foundation for automating
 insurance workflows yet small enough to grok in minutes.
 
+This project is used for the application and pushing the container image to ECR which will be used by the infra to run the application.
 ---
 
-## 🎯 Why This Exists
+## 🎯 Why This Exists and what does it do
 - **Challenge goal:** Prove the ability to structure async Python, enforce a
   singleton task-runner, and reason about scalability, observability, and
   security.
 - **Scope:** Focus on clean architecture & documentation; (Application and Infra seperation in diferent repos )
-
 ---
 
 ## 📐 High-Level Architecture
@@ -187,7 +187,26 @@ docker run -p 8000:8000 --env-file .env agent-runner
 
 ```bash
 pytest -q
+
 ```
+### 🧪 Expanding Tests for Production
+
+The current test suite covers the most essential flows:
+- ✅ Happy path (successful agent run)
+- 🚫 Rejected if an agent is already running
+- ❌ Fails gracefully on unsupported agent types
+
+For a production-grade system, testing would be expanded to cover many more real-world scenarios. For example:
+
+- **Invalid Input**: What if someone sends an empty user ID or a non-UUID string?
+- **Security**: What if someone tries to inject code into the payload?
+- **Rate Limiting**: What happens if one user sends 100 requests in a second?
+- **Infrastructure Failures**: What if the app loses network or crashes mid-execution?
+- **Structured Logging Verification**: Ensuring each request logs the expected fields for tracing/debugging.
+- **Load/Stress Testing**: Can the app handle 500 concurrent users without failing?
+
+In production, we would use mocking and load testing tools to simulate these cases without affecting real services, and ensure the app behaves reliably under all conditions.
+
 
 ---
 
