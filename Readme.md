@@ -58,6 +58,23 @@ Logs flow to stdout in structured JSON.*
 
 ---
 
+## 🚀 Why **FastAPI**?
+
+| Feature                     | Benefit                                                                 |
+|----------------------------|-------------------------------------------------------------------------|
+| **Async-first design**     | Native `async`/`await` support for high-throughput non-blocking ops     |
+| **Automatic OpenAPI docs** | FastAPI auto-generates an OpenAPI 3 spec + Swagger UI with no setup     |
+| **Built-in Swagger UI**    | Available at [http://localhost:8080/docs](http://localhost:8080/docs)   |
+| **Manual testing support** | Easily send POST/GET requests through browser without extra tools       |
+| **Type safety**            | Request/response validation using Pydantic + Python typing              |
+
+> Open `http://localhost:8080/docs` to interactively:
+> - Trigger a new agent run (`POST /agents/run`)
+> - Poll the agent’s status (`GET /agents/status/{run_id}`)
+> - See request and response schemas instantly
+
+This makes the API self-documenting and user-friendly for developers and testers
+
 ## 🤖 Agent Lifecycle
 
 1. **START** – logs `"Hello, I am a <agent-type> agent for <user-id>"`.
@@ -137,7 +154,77 @@ uvicorn main:app --reload     # → http://localhost:8000
 docker build -t agent-runner .
 docker run -p 8000:8000 --env-file .env agent-runner
 ```
+---
+
 
 ---
+
+## 🛠️ CI/CD Pipeline (GitHub Actions)
+
+This project uses a GitHub Actions workflow (`.github/workflows/deploy.yml`) to build, test, scan, and push the Docker image to **AWS ECR** on every push to the `main` branch.
+
+### 🧩 Steps Explained
+
+| Step | Description |
+|------|-------------|
+| ✅ **Checkout code**         | Fetches the latest commit from `main` |
+| 🐍 **Set up Python**         | Uses Python 3.10 |
+| 📦 **Install dependencies**  | Installs project packages from `requirements.txt` |
+| 🧪 **Run tests**             | Executes all `pytest` test cases. The build **fails if any test fails** |
+| 🔐 **Configure AWS**         | Authenticates using GitHub secrets and sets AWS region |
+| 🔑 **Login to ECR**          | Logs into Amazon ECR using AWS credentials |
+| 🐳 **Build Docker image**    | Builds the image and tags it as:  
+`<account_id>.dkr.ecr.eu-central-1.amazonaws.com/agent-runner-repo:latest` |
+| 🛡️ **Trivy Security Scan**  | Scans the Docker image for **HIGH/CRITICAL** vulnerabilities and fails if found |
+| 🚀 **Push to ECR**           | Pushes the image to your ECR repo if all checks pass |
+
+> The pushed image is then used by the **ECS Fargate service** (provisioned in your separate Terraform repo) to deploy the backend container.
+
+---
+
+### 🔐 GitHub Secrets Used
+
+| Secret Name              | Purpose                         |
+|--------------------------|---------------------------------|
+| `AWS_ACCESS_KEY_ID`      | Access key for ECR push         |
+| `AWS_SECRET_ACCESS_KEY`  | Secret key for ECR push         |
+
+---
+
+### 🧪 Trigger
+
+```yaml
+on:
+  push:
+    branches: [main]
+
+
+⚠️ **Note on Image Tagging**
+
+For demo purposes, this pipeline always builds and pushes the Docker image with the `:latest` tag:
+
+While convenient for quick iteration and manual testing, **using `latest` in production is strongly discouraged**.
+
+### ❌ Problems with `latest` in production:
+- No version pinning = no rollback capability
+- Makes deployments non-reproducible
+- Not a secure practise to use latest tag as an attacker may gain acces and deploy another latest version.
+
+### ✅ Production Best Practice:
+Tag every image with a unique version — typically the Git SHA or a semver:
+```bash
+docker tag agent-runner:abc123 <repo>:abc123
+
+```
+
+### 🔐 Least-Privilege IAM Setup
+
+A dedicated IAM user was created **only** for CI/CD pushes to ECR:
+
+1. **User name**: `github-inca-CI`
+2. **Access keys**: stored as GitHub Secrets  
+   - `AWS_ACCESS_KEY_ID`  
+   - `AWS_SECRET_ACCESS_KEY`
+3. **Attached policy** minimum permissions for the demo (Can be further grained down)
 
 
