@@ -106,18 +106,18 @@ To support real-world multi-user load, this lock would be replaced or removed:
 ### ⚖️ Trade-offs: Lock vs Concurrent Execution
 
 Using `asyncio.Lock`                                  
-✅ Prevents race conditions and simplifies state management 
-✅ Very simple to implement in a single-instance app
-✅ Ideal when external systems must be accessed exclusively 
-❌ Only one request runs at a time (low throughput)
-❌ Not scalable for production workloads 
+- ✅ Prevents race conditions and simplifies state management 
+- ✅ Very simple to implement in a single-instance app
+- ✅ Ideal when external systems must be accessed exclusively 
+- ❌ Only one request runs at a time (low throughput)
+- ❌ Not scalable for production workloads 
 
 Using `Concurrent Execution`
-✅ Handles high traffic and multiple users efficiently
-✅ Scales horizontally with queues or async workers  
-✅ More responsive under load, better throughput 
-❌ Needs robust error handling and isolation strategies
-❌ Higher complexity and risk of race conditions 
+- ✅ Handles high traffic and multiple users efficiently
+- ✅ Scales horizontally with queues or async workers  
+- ✅ More responsive under load, better throughput 
+- ❌ Needs robust error handling and isolation strategies
+- ❌ Higher complexity and risk of race conditions 
 ---
 
 
