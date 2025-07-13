@@ -191,13 +191,15 @@ This project uses a GitHub Actions workflow (`.github/workflows/deploy.yml`) to 
 
 ---
 
-### 🧪 Trigger
+### 🚦 Trigger
 
-```yaml
-on:
-  push:
-    branches: [main]
+This workflow is configured with **`workflow_dispatch`**, meaning it only runs when you launch it manually:
 
+1. Go to your repository’s **Actions** tab.
+2. Select **“Build, Test, Scan, and Push to ECR”**.
+3. Click **“Run workflow”**, choose the branch (default is `main`), and hit **Run**.
+
+Because it’s manual, edits to docs or README files no longer kick off the pipeline to push to ECR.
 
 ⚠️ **Note on Image Tagging**
 
