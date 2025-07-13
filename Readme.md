@@ -161,7 +161,7 @@ docker run -p 8000:8000 --env-file .env agent-runner
 
 ## 🛠️ CI/CD Pipeline (GitHub Actions)
 
-This project uses a GitHub Actions workflow (`.github/workflows/deploy.yml`) to build, test, scan, and push the Docker image to **AWS ECR** on every push to the `main` branch.
+This project uses a GitHub Actions workflow (`.github/workflows/docker-ecr.yml`) to build, test, scan, and push the Docker image to **AWS ECR** on every push to the `main` branch.
 
 ### 🧩 Steps Explained
 
