@@ -230,3 +230,32 @@ A dedicated IAM user was created **only** for CI/CD pushes to ECR:
 3. **Attached policy** minimum permissions for the demo (Can be further grained down)
 
 
+## ✅ TODO – Next Improvements
+
+These enhancements are planned to move from demo-grade to production-grade setup:
+
+- 🔀 **Separate branches per environment** (e.g. `dev`, `staging`, `prod`)  
+- ✅ **Merge Requests with approval required**  
+  - Only approved MRs to `main` will trigger a CI pipeline that builds and pushes the image to ECR  
+- 🏷️ **Replace `:latest` tag with versioned tags**  
+  - Git SHA or release versions will be used  
+  - Enables proper rollback and traceability  
+- 🔐 **Secrets management with Vault**  
+  - GitHub secrets will be replaced by a centralized **HashiCorp Vault setup**  
+  - Each environment will have **isolated access policies**  
+  - Prevents secrets from leaking across stages or services
+
+These changes will help establish a secure, auditable, and production-ready delivery pipeline.
+
+
+## 🤖 AI Assistance in This Project
+
+To accelerate development and maintain clarity under time constraints, this project leveraged **AI-assisted workflows** for:
+
+- 📄 **Documentation drafting**: Accelerated README creation and structured formatting  
+- ⚙️ **Architecture design feedback**: Validated initial architecture choices and suggested scalability trade-offs  
+- 🐍 **Python error troubleshooting**: Helped debug async code and refine logging structure  
+- 📦 **CI/CD pipeline planning**: Assisted in planning a secure, minimal AWS deployment strategy via GitHub Actions  
+
+All decisions were critically reviewed, and code was manually refined to ensure correctness and clarity.  
+AI was treated as a **collaborator**, not an autopilot.
