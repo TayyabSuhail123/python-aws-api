@@ -76,6 +76,51 @@ This makes the API self-documenting and user-friendly for developers and testers
 
 ---
 
+---
+
+---
+
+## 🔒 Single-Agent Execution Constraint
+
+### ⚙️ Why `asyncio.Lock`?
+
+The challenge required enforcing that only **one agent runs at a time**, with all extra requests clearly rejected.
+
+We chose `asyncio.Lock` because:
+- It’s **built into Python** — no need for external dependencies
+- It works perfectly for **in-memory, async-first** apps like FastAPI
+- It's easy to understand, test, and reason about in a single-instance setup
+
+---
+
+### 🔁 Scaling in Production
+
+To support real-world multi-user load, this lock would be replaced or removed:
+
+- Use a **distributed lock** (e.g., Redis or DynamoDB) to coordinate across multiple pods
+- Remove the lock entirely if concurrent runs are allowed
+- Use a **message queue** (like SQS + Fargate workers) to handle jobs in parallel
+
+---
+
+### ⚖️ Trade-offs: Lock vs Concurrent Execution
+
+Using `asyncio.Lock`                                  
+✅ Prevents race conditions and simplifies state management 
+✅ Very simple to implement in a single-instance app
+✅ Ideal when external systems must be accessed exclusively 
+❌ Only one request runs at a time (low throughput)
+❌ Not scalable for production workloads 
+
+Using `Concurrent Execution`
+✅ Handles high traffic and multiple users efficiently
+✅ Scales horizontally with queues or async workers  
+✅ More responsive under load, better throughput 
+❌ Needs robust error handling and isolation strategies
+❌ Higher complexity and risk of race conditions 
+---
+
+
 ## 🧯 Error Handling Strategy
 
 | Scenario                       | Handling                                                  |
@@ -88,7 +133,7 @@ This makes the API self-documenting and user-friendly for developers and testers
 
 ---
 
-## 🔍 Structured Logging
+## 🔍 Observability & Logging
 
 All logs use `structlog` → JSON with keys: `timestamp`, `level`, `event`,
 `agent_type`, `user_id`, `run_id`. Example:
@@ -100,6 +145,13 @@ All logs use `structlog` → JSON with keys: `timestamp`, `level`, `event`,
 ```
 
 *These flow straight into CloudWatch / Datadog without parsing gymnastics.*
+
+#### 🔧 Logged Events
+- `agent_start` – When an agent run begins
+- `agent_complete` – When it finishes successfully
+- `agent_error` – On failure
+- `agent_busy` – If a new run is requested while another is active
+- `invalid_agent_type` – Unsupported `agent_type` requested
 
 ---
 # HOW TO RUN APPLICATION
