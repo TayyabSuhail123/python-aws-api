@@ -75,28 +75,6 @@ Logs flow to stdout in structured JSON.*
 
 This makes the API self-documenting and user-friendly for developers and testers
 
-## 🤖 Agent Lifecycle
-
-1. **START** – logs `"Hello, I am a <agent-type> agent for <user-id>"`.
-2. **EXECUTION** – sleeps 5 s (placeholder for real work).
-3. **COMPLETE** – logs completion message.  
-   *Policy-checker* additionally logs a random `"approved"` / `"rejected"`.
-4. **States** exposed to clients: `PENDING` → `RUNNING` → `DONE` or `ERROR`.
-
----
-
-## 🚦 Single-Run Constraint & Trade-offs
-
-| Why chosen             | Scaling path                                   | Drawbacks |
-|------------------------|------------------------------------------------|-----------|
-| *Business rule:* ensure deterministic access to single external mutexed resource (e.g., expensive licence).<br>*Simplicity:* one in-process lock, no DB needed. | • Swap `asyncio.Lock` for a distributed lock (Redis, DynamoDB Lease).<br>• Spin multiple runner replicas behind a queue and let the lock span pods.<br>• Or just allow concurrency once resource limits removed. | • Throughput = 1 → latency spikes.<br>• App instance becomes single point of contention.<br>• Not horizontally scalable without redesign.|
-
-Rejected requests return **`409 Conflict`** with JSON:
-
-```json
-{"detail": "An agent is already running, please retry later"}
-```
-
 ---
 
 ## 🧯 Error Handling Strategy
@@ -126,17 +104,15 @@ All logs use `structlog` → JSON with keys: `timestamp`, `level`, `event`,
 
 ---
 
-
-
 ## 🧪 Testing Approach
-
-
 
 Run all:
 
 ```bash
 pytest -q
 ```
+
+---
 
 ## ⚡ Quick Start
 
@@ -154,14 +130,12 @@ uvicorn main:app --reload     # → http://localhost:8000
 docker build -t agent-runner .
 docker run -p 8000:8000 --env-file .env agent-runner
 ```
----
-
 
 ---
 
 ## 🛠️ CI/CD Pipeline (GitHub Actions)
 
-This project uses a GitHub Actions workflow (`.github/workflows/docker-ecr.yml`) to build, test, scan, and push the Docker image to **AWS ECR** on every push to the `main` branch.
+This project uses a GitHub Actions workflow (`.github/workflows/deploy.yml`) to build, test, scan, and push the Docker image to **AWS ECR** using a manual trigger.
 
 ### 🧩 Steps Explained
 
@@ -180,14 +154,6 @@ This project uses a GitHub Actions workflow (`.github/workflows/docker-ecr.yml`)
 
 > The pushed image is then used by the **ECS Fargate service** (provisioned in your separate Terraform repo) to deploy the backend container.
 
----
-
-### 🔐 GitHub Secrets Used
-
-| Secret Name              | Purpose                         |
-|--------------------------|---------------------------------|
-| `AWS_ACCESS_KEY_ID`      | Access key for ECR push         |
-| `AWS_SECRET_ACCESS_KEY`  | Secret key for ECR push         |
 
 ---
 
@@ -203,21 +169,22 @@ Because it’s manual, edits to docs or README files no longer kick off the pipe
 
 ⚠️ **Note on Image Tagging**
 
-For demo purposes, this pipeline always builds and pushes the Docker image with the `:latest` tag:
+For demo purposes, this pipeline always builds and pushes the Docker image with the `:latest` tag.
 
 While convenient for quick iteration and manual testing, **using `latest` in production is strongly discouraged**.
 
 ### ❌ Problems with `latest` in production:
 - No version pinning = no rollback capability
 - Makes deployments non-reproducible
-- Not a secure practise to use latest tag as an attacker may gain acces and deploy another latest version.
+- Not a secure practice to use latest tag as an attacker may gain access and deploy another latest version.
 
 ### ✅ Production Best Practice:
 Tag every image with a unique version — typically the Git SHA or a semver:
 ```bash
 docker tag agent-runner:abc123 <repo>:abc123
-
 ```
+
+---
 
 ### 🔐 Least-Privilege IAM Setup
 
