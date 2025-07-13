@@ -2,9 +2,8 @@
 
 Self-contained FastAPI service that launches **one agent at a time** and exposes
 REST endpoints to start / monitor runs. Designed as a foundation for automating
-insurance workflows yet small enough to grok in minutes.
+insurance workflows yet small enough to grok in minutes.This project is used for the application and pushing the container image to ECR which will be used by the infra to run the application.
 
-This project is used for the application and pushing the container image to ECR which will be used by the infra to run the application.
 ---
 
 ## 🎯 Why This Exists and what does it do
@@ -117,7 +116,6 @@ Using `Concurrent Execution`
 - ❌ Higher complexity and risk of race conditions 
 ---
 
----
 
 ## 🔄 Expanding Agent Behavior for Production
 
