@@ -10,8 +10,7 @@ insurance workflows yet small enough to grok in minutes.
 - **Challenge goal:** Prove the ability to structure async Python, enforce a
   singleton task-runner, and reason about scalability, observability, and
   security.
-- **Scope:** Focus on clean architecture & documentation; (Terraform,
-  infra in another repo)
+- **Scope:** Focus on clean architecture & documentation; (Application and Infra seperation in diferent repos )
 
 ---
 
@@ -104,16 +103,6 @@ All logs use `structlog` → JSON with keys: `timestamp`, `level`, `event`,
 
 ---
 
-## 🧪 Testing Approach
-
-Run all:
-
-```bash
-pytest -q
-```
-
----
-
 
 ## 🛠️ CI/CD Pipeline (GitHub Actions)
 
@@ -187,8 +176,18 @@ docker run -p 8000:8000 --env-file .env agent-runner
 
 ---
 
+## 🧪 Testing Locally
 
-### 🔐 Least-Privilege IAM Setup
+3 test which test happy path , agent busy scenario and fail path . Used by the CI/CD to run locally after setting up run
+
+```bash
+pytest -q
+```
+
+---
+
+
+# 🔐 Least-Privilege IAM Setup
 
 A dedicated IAM user was created **only** for CI/CD pushes to ECR:
 
@@ -199,7 +198,7 @@ A dedicated IAM user was created **only** for CI/CD pushes to ECR:
 3. **Attached policy** minimum permissions for the demo (Can be further grained down)
 
 
-## ✅ TODO – Next Improvements
+# ✅ TODO – Next Improvements
 
 These enhancements are planned to move from demo-grade to production-grade setup:
 
@@ -217,7 +216,7 @@ These enhancements are planned to move from demo-grade to production-grade setup
 These changes will help establish a secure, auditable, and production-ready delivery pipeline.
 
 
-## 🤖 AI Assistance in This Project
+# 🤖 AI Assistance in This Project
 
 To accelerate development and maintain clarity under time constraints, this project leveraged **AI-assisted workflows** for:
 
