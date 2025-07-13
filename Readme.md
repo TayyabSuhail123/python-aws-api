@@ -76,9 +76,6 @@ This makes the API self-documenting and user-friendly for developers and testers
 
 ---
 
----
-
----
 
 ## 🔒 Single-Agent Execution Constraint
 
@@ -119,6 +116,22 @@ Using `Concurrent Execution`
 - ❌ Needs robust error handling and isolation strategies
 - ❌ Higher complexity and risk of race conditions 
 ---
+
+---
+
+## 🔄 Expanding Agent Behavior for Production
+
+Right now, the agents are just simple placeholders (e.g. sleeping for a few seconds).
+
+In a real-world system, these would be replaced with actual logic like:
+
+- Calling real APIs 
+- Storing results in a database or S3
+- Sending events to a message queue (SQS, Kafka)
+- Handling timeouts, retries, and failures properly
+- Logging more details for debugging and compliance
+
+This structure is kept simple to focus on design, but it's easy to plug in real tasks later.
 
 
 ## 🧯 Error Handling Strategy
