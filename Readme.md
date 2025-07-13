@@ -102,9 +102,12 @@ All logs use `structlog` → JSON with keys: `timestamp`, `level`, `event`,
 *These flow straight into CloudWatch / Datadog without parsing gymnastics.*
 
 ---
+# HOW TO RUN APPLICATION
 
+For a better experience this project requires no local setup and can just be run using a manual Github workflow trigger.
+There is however still the possibility to run locally , both of these methods are explained below
 
-## 🛠️ CI/CD Pipeline (GitHub Actions)
+## 1. 🛠️ CI/CD Pipeline (GitHub Actions)
 
 This project uses a GitHub Actions workflow (`.github/workflows/docker-ecr.yml`) to build, test, scan, and push the Docker image to **AWS ECR** using a manual trigger.
 
@@ -128,7 +131,7 @@ This project uses a GitHub Actions workflow (`.github/workflows/docker-ecr.yml`)
 
 ---
 
-### 🚦 Trigger
+### 🚦 How to Trigger the workflow
 
 This workflow is configured with **`workflow_dispatch`**, meaning it only runs when you launch it manually:
 
@@ -157,8 +160,10 @@ docker tag agent-runner:abc123 <repo>:abc123
 
 ---
 
-## ⚡ RUN LOCALLY
+## 2.⚡ RUN LOCALLY
 
+
+### RUN USING TERMINAL
 ```bash
 git clone https://github.com/TayyabSuhail123/python-aws-api.git
 cd python-aws-api
