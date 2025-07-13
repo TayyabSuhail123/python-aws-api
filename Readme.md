@@ -22,7 +22,7 @@ insurance workflows yet small enough to grok in minutes.
 └────────────┘                    │              │
         ▲                         │  asyncio.Lock│  (prevents concurrent runs)
         │  GET /agents/status     │              │
-        └───────────────◀──────── │  Agent Pool  │
+        └───────────────◀──────── │  Agents      │
                                   └──────┬───────┘
                                          │
                                ┌──────────▼─────────┐
