@@ -114,28 +114,10 @@ pytest -q
 
 ---
 
-## ⚡ Quick Start
-
-```bash
-git clone https://github.com/TayyabSuhail123/python-aws-api.git
-cd python-aws-api
-pip install -r requirements.txt
-cp .env.example .env          # tweak LOG_LEVEL etc.
-uvicorn main:app --reload     # → http://localhost:8000
-```
-
-### Docker
-
-```bash
-docker build -t agent-runner .
-docker run -p 8000:8000 --env-file .env agent-runner
-```
-
----
 
 ## 🛠️ CI/CD Pipeline (GitHub Actions)
 
-This project uses a GitHub Actions workflow (`.github/workflows/deploy.yml`) to build, test, scan, and push the Docker image to **AWS ECR** using a manual trigger.
+This project uses a GitHub Actions workflow (`.github/workflows/docker-ecr.yml`) to build, test, scan, and push the Docker image to **AWS ECR** using a manual trigger.
 
 ### 🧩 Steps Explained
 
@@ -185,6 +167,26 @@ docker tag agent-runner:abc123 <repo>:abc123
 ```
 
 ---
+
+## ⚡ RUN LOCALLY
+
+```bash
+git clone https://github.com/TayyabSuhail123/python-aws-api.git
+cd python-aws-api
+pip install -r requirements.txt
+cp .env.example .env          # tweak LOG_LEVEL etc.
+uvicorn main:app --reload     # → http://localhost:8000
+```
+
+### Docker
+
+```bash
+docker build -t agent-runner .
+docker run -p 8000:8000 --env-file .env agent-runner
+```
+
+---
+
 
 ### 🔐 Least-Privilege IAM Setup
 
