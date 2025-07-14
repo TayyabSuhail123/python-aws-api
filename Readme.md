@@ -299,6 +299,7 @@ These enhancements are planned to move from demo-grade to production-grade setup
   - GitHub secrets will be replaced by a centralized **HashiCorp Vault setup**  
   - Each environment will have **isolated access policies**  
   - Prevents secrets from leaking across stages or services
+  - Dockerfile hardening to be more secure.
 
 These changes will help establish a secure, auditable, and production-ready delivery pipeline.
 
