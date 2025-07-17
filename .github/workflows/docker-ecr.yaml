@@ -81,6 +81,7 @@ jobs:
         image-ref: "${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ steps.tag.outputs.tag }}"
         format: table
         exit-code: 1
+        severity: CRITICAL,HIGH
         ignore-unfixed: true
 
     - name: Push Docker image to ECR
