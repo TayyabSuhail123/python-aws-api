@@ -18,5 +18,5 @@ ENV LOG_LEVEL=INFO \
 # ---------- Expose FastAPI port ----------
 EXPOSE 8000
 
-# ---------- Start app ----------
+# ---------- Start app ---------
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
