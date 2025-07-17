@@ -60,7 +60,10 @@ jobs:
       id: tag
       run: |
         git fetch --tags
-        echo "tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"  
+        TAG=$(git tag --sort=-v:refname | head -n1 || true)
+        if [ -z "$TAG" ]; then TAG="v0.0.0"; fi
+
+        echo "tag=$TAG" >> "$GITHUB_OUTPUT"
     
 
     - name: Login to Amazon ECR
