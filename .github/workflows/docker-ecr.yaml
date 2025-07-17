@@ -1,7 +1,12 @@
 name: Build, Test, Scan, and Push to ECR
 
 on:
-   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - test-semantic-release         
+  workflow_dispatch:                
+
 
 env:
   AWS_REGION: eu-central-1
@@ -36,6 +41,27 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
+    
+    - name: Set up Node
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: npm
+
+    - name: npm ci
+      run: npm ci
+
+    - name: semantic-release
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: npx semantic-release
+    
+    - name: Get release tag
+      id: tag
+      run: |
+        git fetch --tags
+        echo "tag=$(git describe --tags --abbrev=0)" >> "$GITHUB_OUTPUT"  
+    
 
     - name: Login to Amazon ECR
       id: login-ecr
@@ -43,18 +69,18 @@ jobs:
 
     - name: Build Docker image
       run: |
-        IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:latest"
+        IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ steps.tag.outputs.tag }}"
         docker build -t $IMAGE_URI .
 
     - name: Scan Docker image with Trivy
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: "${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:latest"
+        image-ref: "${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ steps.tag.outputs.tag }}"
         format: table
         exit-code: 1
         ignore-unfixed: true
 
     - name: Push Docker image to ECR
       run: |
-        IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:latest"
+        IMAGE_URI="${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPO }}:${{ steps.tag.outputs.tag }}"
         docker push $IMAGE_URI

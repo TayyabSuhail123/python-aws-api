@@ -1,0 +1,31 @@
+{
+  "name": "agent_runner",
+  "version": "1.0.0",
+  "description": "Self-contained FastAPI service that launches **one agent at a time** and exposes REST endpoints to start / monitor runs. Designed as a foundation for automating insurance workflows yet small enough to grok in minutes.This project is used for the application and pushing the container image to ECR which will be used by the infra to run the application.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TayyabSuhail123/python-aws-api.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TayyabSuhail123/python-aws-api/issues"
+  },
+  "homepage": "https://github.com/TayyabSuhail123/python-aws-api#readme",
+  "devDependencies": {
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.3",
+    "@semantic-release/release-notes-generator": "^14.0.3",
+    "semantic-release": "^24.2.7"
+  }
+}
